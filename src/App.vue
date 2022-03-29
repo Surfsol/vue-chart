@@ -6,7 +6,6 @@ import Table from './components/Table.vue'
 
 export default {
   components: {
-    "excel-upload": ExcelUpload,
     "build-table": Table
   },
   data() {
@@ -42,13 +41,10 @@ export default {
 
 <template>
   <header>
-    <div class="wrapper">Webscraper</div>
+    <div class="wrapper">Upload Excel Data</div>
   </header>
-  <excel-upload/>
   <build-table/>
-
 </template>
-
 <style>
 @import "./assets/base.css";
 

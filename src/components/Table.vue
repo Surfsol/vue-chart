@@ -3,66 +3,52 @@ export default {
   name: "excelUpload",
   props: {},
   data() {
-    return { rowData: [] };
+    return { rowData: [], category: "", categoryHeaders: [], body: [] };
   },
   methods: {
-    getInput(event) {
-      console.log(event.target.value);
+    uploadRows() {
+      console.log('upload',{ body });
     },
     generateTable(event) {
       let inputData = event.target.value;
-      console.log({ inputData });
       let rows = inputData.split("\n");
-      console.log({ rows });
 
-      for (var y of rows) {
-        console.log({ y });
-        var cells = y.split("\t");
+      for (var y in rows) {
+        var cells = rows[y].split("\t");
         var row = [];
+        let rowObj = {};
         for (var x in cells) {
           row.push("<td>" + cells[x] + "</td>");
+          if (y === "0") {
+            this.categoryHeaders.push(cells[x]);
+          } else {
+            rowObj[this.categoryHeaders[x]] = cells[x];
+          }
         }
+        this.body.push(rowObj);
         this.rowData.push(row);
+        this.category = this.categoryHeaders[0];
       }
-      console.log( this.rowData);
-      // Insert into DOM
-      //$("#excel_table").html(table);
-
-      var tblJSON = $("#excel_table tr")
-        .get()
-        .map(function (row) {
-          return $(row)
-            .find("td")
-            .get()
-            .map(function (cell) {
-              return $(cell).html();
-            });
-        });
-      tblJSON = JSON.stringify(tblJSON);
-
-      $("#templateForm").append(
-        '<input type="hidden" name="tableValue" value=\'' + tblJSON + "' /> "
-      );
-      $("#pricesSubmit").prop("disabled", false);
     },
   },
 };
 </script>
 
 <template>
-  <span>Multiline table is:</span>
-  <p style="white-space: pre-line">{{ table }}</p>
-  <br />
+  <span>Paste Excel Table:</span>
   <textarea
     v-model="table"
     placeholder="add multiple lines"
     @change="generateTable"
   ></textarea>
-  <tr v-for="item of rowData" :key="item"> 
-      <td>{{item}}</td>
-</tr>
+  <br />
+  <tr v-for="item of body" :key="item">
+    <td>{{ item }}</td>
+  </tr>
+  <div>Review category headers</div>
+  <div>{{ this.categoryHeaders.length > 0 ? this.categoryHeaders : "" }}</div>
+  <br />
+  <p style="white-space: pre-line">{{ table }}</p>
+  <br />
+  <button id="upload" v-on:click="UploadRows">Upload</button>
 </template>
-
-      // $( "#pricesSubmit" ).click(function() {
-    //   $( "#templateForm" ).submit();
-    // });
